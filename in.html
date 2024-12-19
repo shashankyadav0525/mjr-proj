@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #arrayContainer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .array-element {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .highlight-compare {
+            background-color: #FF5733 !important;
+        }
+        .highlight-swap {
+            background-color: #FFC300 !important;
+        }
+        .value, .index {
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sorting Algorithm Visualizer</h1>
+    <input type="text" id="arrayInput" placeholder="e.g., 500, 45, 184, 343, 723, 718, 631, 274">
+    <button onclick="startSorting()">Start Sorting</button>
+    <div id="arrayContainer"></div>
+
+    <script>
+        function createArray() {
+            let input = document.getElementById("arrayInput").value;
+            return input.split(",").map(Number);
+        }
+
+        function drawArray(arr, highlightIndices = [], swap = false) {
+            let container = document.getElementById("arrayContainer");
+            container.innerHTML = '';
+            arr.forEach((value, index) => {
+                let element = document.createElement("div");
+                element.className = 'array-element';
+                if (highlightIndices.includes(index)) {
+                    element.classList.add(swap ? "highlight-swap" : "highlight-compare");
+                }
+                let valLabel = document.createElement("div");
+                valLabel.className = 'value';
+                valLabel.innerText = value;
+                let idxLabel = document.createElement("div");
+                idxLabel.className = 'index';
+                idxLabel.innerText = index;
+                element.appendChild(valLabel);
+                element.appendChild(idxLabel);
+                container.appendChild(element);
+            });
+        }
+
+        async function bubbleSort(arr) {
+            for (let i = 0; i < arr.length - 1; i++) {
+                for (let j = 0; j < arr.length - i - 1; j++) {
+                    drawArray(arr, [j, j + 1], false);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    if (arr[j] > arr[j + 1]) {
+                        drawArray(arr, [j, j + 1], true);
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        drawArray(arr, [j, j + 1], true);
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                }
+            }
+            drawArray(arr);
+            return arr;
+        }
+
+        function startSorting() {
+            let array = createArray();
+            drawArray(array);
+            bubbleSort(array);
+        }
+    </script>
+</body>
+</html>
